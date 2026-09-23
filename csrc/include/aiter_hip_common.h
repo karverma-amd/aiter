@@ -16,6 +16,7 @@
 #include <cstdlib>
 #include <fstream>
 #include <hip/hip_runtime.h>
+#include <hip/hip_ext.h>
 #include <iostream>
 #include <memory>
 #include <mutex>
@@ -334,6 +335,11 @@ class AiterAsmKernelFast
         // Don't error check here -- registration is validated once in init().
         (void)hipGetFuncBySymbol(&kernel_func, reinterpret_cast<void*>(this));
 
+        static const bool pdl = [] {
+            const char* e = std::getenv("AITER_ENABLE_PDL");
+            return e != nullptr && e[0] == '1' && e[1] == '\0';
+        }();
+
         if(kargs.cluster_x > 1 || kargs.cluster_y > 1 || kargs.cluster_z > 1)
         {
 #ifdef AITER_ENABLE_CLUSTER_LAUNCH
@@ -369,6 +375,27 @@ class AiterAsmKernelFast
                         ") but this build lacks cluster support; rebuild with "
                         "AITER_ENABLE_CLUSTER_LAUNCH on gfx1250+ / HIP >= 7.0");
 #endif
+        }
+
+        if(pdl)
+        {
+            // hipExtModuleLaunchKernel takes global thread counts, not grid dims.
+            HIP_CALL_LAUNCH(hipExtModuleLaunchKernel(
+                kernel_func,
+                static_cast<uint32_t>(kargs.gdx * kargs.bdx),
+                static_cast<uint32_t>(kargs.gdy * kargs.bdy),
+                static_cast<uint32_t>(kargs.gdz * kargs.bdz),
+                static_cast<uint32_t>(kargs.bdx),
+                static_cast<uint32_t>(kargs.bdy),
+                static_cast<uint32_t>(kargs.bdz),
+                0,
+                kargs.stream,
+                nullptr,
+                (void**)&config,
+                nullptr,
+                nullptr,
+                hipExtAnyOrderLaunch));
+            return;
         }
 
         HIP_CALL_LAUNCH(hipModuleLaunchKernel(kernel_func,
