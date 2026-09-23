@@ -1,0 +1,10 @@
+gfx,cu_num,token,model_dim,inter_dim,expert,topk,act_type,dtype,q_dtype_a,q_dtype_w,q_type,use_g1u1,doweight_stage1,max_m,tile_m,tile_n,tile_k,tile_m2,tile_n2,tile_k2,m_warp,n_warp,m_warp2,n_warp2,num_buffers,num_buffer_stage2,split_k1,split_k2,grouped_persistent_m,persistent_workers,wave_specialized_tdm,tdm_as_in_prologue,cluster_n,waves_per_tensor_tdm,next_stage_prefetch,tdm_b_th,kernelName1,kernelName2,us,tflops,bw,ep_fused,cluster_n2
+gfx1250,,4,7168,2048,65,9,ActivationType.Silu,torch.bfloat16,torch.float4_e2m1fn_x2,torch.float4_e2m1fn_x2,QuantType.per_1x32,,,,64,256,256,,,,1,4,,,3,,,,,,,,,,,,,,,,,,
+gfx1250,,16,7168,2048,65,9,ActivationType.Silu,torch.bfloat16,torch.float4_e2m1fn_x2,torch.float4_e2m1fn_x2,QuantType.per_1x32,,,,64,256,128,,,,1,4,,,3,,,,,,,,,,,,,,,,,,
+gfx1250,,32,7168,2048,65,9,ActivationType.Silu,torch.bfloat16,torch.float4_e2m1fn_x2,torch.float4_e2m1fn_x2,QuantType.per_1x32,,,,64,128,256,,,,1,4,,,2,,,,,,,,,,,,,,,,,,
+gfx1250,,64,7168,2048,65,9,ActivationType.Silu,torch.bfloat16,torch.float4_e2m1fn_x2,torch.float4_e2m1fn_x2,QuantType.per_1x32,,,,64,128,256,,,,1,4,,,2,,,,,,,,,,,,,,,,,,
+gfx1250,,128,7168,2048,65,9,ActivationType.Silu,torch.bfloat16,torch.float4_e2m1fn_x2,torch.float4_e2m1fn_x2,QuantType.per_1x32,,,,64,128,256,,,,1,4,,,2,,,,,,,,,,,,,,,,,,
+gfx1250,,256,7168,2048,65,9,ActivationType.Silu,torch.bfloat16,torch.float4_e2m1fn_x2,torch.float4_e2m1fn_x2,QuantType.per_1x32,,,,64,128,256,,,,1,4,,,2,,,,,,,,,,,,,,,,,,
+gfx1250,,512,7168,2048,65,9,ActivationType.Silu,torch.bfloat16,torch.float4_e2m1fn_x2,torch.float4_e2m1fn_x2,QuantType.per_1x32,,,,128,256,256,,,,2,4,,,3,,,,,,,,,,,,,,,,,,
+gfx1250,,1024,7168,2048,65,9,ActivationType.Silu,torch.bfloat16,torch.float4_e2m1fn_x2,torch.float4_e2m1fn_x2,QuantType.per_1x32,,,,128,256,256,,,,2,4,,,3,,,,,,,,,,,,,,,,,,
+gfx1250,,2048,7168,2048,65,9,ActivationType.Silu,torch.bfloat16,torch.float4_e2m1fn_x2,torch.float4_e2m1fn_x2,QuantType.per_1x32,,,,128,256,256,,,,2,4,,,3,,,,,,,,,,,,,,,,,,
