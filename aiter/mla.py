@@ -325,15 +325,14 @@ def get_meta_param(
                 for i in range(1, 17)
             ]
         num_kv_splits = max(tmp, key=lambda x: x[0])[1]
-        # gfx1250 qh128 already uses gdx=2 WGs/head-group, so the occupancy
-        # term saturates at splits=1 for large decode batches and the HBM
-        # penalty then prefers 1. Long KV is still N-split starved; force a
-        # second split so gdz>1. AITER_MLA_NUM_KV_SPLITS overrides.
+        # Occupancy saturates at splits=1 for large gfx1250 qh128 decode
+        # batches. Forcing splits=2 was profiled at 1k4k conc=2048: MLA body
+        # dropped ~10us but _fwd_kernel_stage2_asm added ~41us/layer (~2.5ms
+        # /step) and decode went 39.57ms -> 41.44ms. Keep the heuristic; override
+        # with AITER_MLA_NUM_KV_SPLITS for experiments.
         override = os.getenv("AITER_MLA_NUM_KV_SPLITS")
         if override:
             num_kv_splits = int(override)
-        elif is_gfx1250 and nhead == 128 and avg_kv >= 2048:
-            num_kv_splits = max(num_kv_splits, 2)
 
     get_block_n_fp8 = {
         8: 64,
