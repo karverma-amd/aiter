@@ -17,6 +17,8 @@ WIN = {
     512:  (128, 256, 256, 2, 4, 3),
     1024: (128, 256, 256, 2, 4, 3),
     2048: (128, 256, 256, 2, 4, 3),
+    4096: (128, 256, 256, 2, 4, 3),
+    8192: (128, 256, 256, 2, 4, 3),
 }
 
 # Fixed match keys for the DSR1 decode a4w4 grouped MoE (cu_num/ep_fused left
@@ -27,7 +29,9 @@ BASE = {
     "model_dim": 7168,
     "inter_dim": 2048,
     "expert": 65,
-    "topk": 9,
+    # EP decode looks up with topk=-1 (EP-agnostic); leave blank = wildcard so
+    # the row matches both the EP path (topk=-1) and any raw-topk path.
+    "topk": None,
     "act_type": "ActivationType.Silu",
     "dtype": "torch.bfloat16",
     "q_dtype_a": "torch.float4_e2m1fn_x2",
