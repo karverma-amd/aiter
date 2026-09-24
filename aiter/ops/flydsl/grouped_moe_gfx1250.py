@@ -87,6 +87,7 @@ def _enum_name(value) -> str:
 
 def _load_grouped_config_rows():
     cfg_path = os.environ.get("AITER_CONFIG_GROUPED_FMOE")
+    env_path = bool(cfg_path)
     if not cfg_path:
         try:
             from aiter.jit.core import AITER_CONFIGS
@@ -98,11 +99,27 @@ def _load_grouped_config_rows():
     if cached is not None:
         return cached
     rows = []
+    missing = []
     for path in str(cfg_path).split(os.pathsep):
-        if not path or not os.path.exists(path):
+        if not path:
+            continue
+        if not os.path.exists(path):
+            missing.append(path)
             continue
         with open(path, newline="") as f:
             rows.extend(csv.DictReader(f))
+    # A path the user asked for but that is not there means every lookup below
+    # silently falls back to the default tile. That is indistinguishable from a
+    # tuned run unless we say so -- it is the usual symptom of a tuned CSV that
+    # never got bind-mounted into the container.
+    if missing and env_path:
+        logger.warning(
+            "AITER_CONFIG_GROUPED_FMOE points at %d path(s) that do not exist "
+            "(%s); grouped MoE will use built-in default tiles. Tuned configs "
+            "will NOT be applied.",
+            len(missing),
+            os.pathsep.join(missing),
+        )
     _GROUPED_CONFIG_CACHE[cfg_path] = rows
     return rows
 
