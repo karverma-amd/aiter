@@ -65,10 +65,14 @@ def _as_bool(value, default: bool) -> bool:
 def _as_int(value, default: int | None) -> int | None:
     # The tuner rewrites its frame through pandas' ``astype(str)``, so a blank
     # cell can come back as the literal "nan"; read those as unset like _cell.
+    # Float-looking strings ("256.0") also show up after CSV merge/astype.
     text = "" if value is None else str(value).strip()
     if text == "" or text.lower() in ("nan", "none"):
         return default
-    return int(text)
+    try:
+        return int(text)
+    except ValueError:
+        return int(float(text))
 
 
 def _dtype_name(dtype) -> str:
@@ -170,7 +174,22 @@ def _find_grouped_config(
     # as a value that matches nothing.
     def _cell(row, k):
         value = str(row.get(k) or "").strip()
-        return "" if value.lower() in ("nan", "none") else value
+        if value.lower() in ("nan", "none"):
+            return ""
+        # pandas/astype(str) turns int flags into "1.0"/"0.0"; keys use "1"/"0".
+        if value in ("1.0", "0.0") and k in (
+            "ep_fused",
+            "use_g1u1",
+            "doweight_stage1",
+        ):
+            return value[0]
+        try:
+            f = float(value)
+            if f == int(f):
+                return str(int(f))
+        except ValueError:
+            pass
+        return value
 
     def _matches(row, *, require_cu_num: bool):
         for k, v in keys.items():
