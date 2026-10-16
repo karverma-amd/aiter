@@ -118,6 +118,12 @@ def gather_kv_b_proj(
     # To avoid out of LDS limit for gfx942
     if arch_info.get_arch() in ("gfx942",) and ChunkK > 64:
         num_stages = 1
+    # gfx1250's LLVM backend aborts (PHINode type mismatch) when this kernel is
+    # software-pipelined with both the K and V fp32 MMA accumulators live, which
+    # is what the first cached-prefix prefill compiles. Disabling the pipeline
+    # keeps a single accumulator chain and compiles correctly.
+    if shuffled_kv_cache and arch_info.get_arch() in ("gfx1250",):
+        num_stages = 1
 
     max_kv_chunks = max(1, (total_kv_k + ChunkK - 1) // ChunkK)
     flat_token_grid = block_size == 1 and not is_fp4_weight
