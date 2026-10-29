@@ -130,7 +130,9 @@ def fused_clamp_act_mul(
         out if no quant, otherwise (out, scale).
 
     Constraints:
-        N must be a power of two, at least 128, and a multiple of 128.
+        N must be a positive multiple of quant_block_size. The kernel pads the
+        tile width to the next power of two internally and masks the remainder,
+        so N need not itself be a power of two.
     """
 
     # setup inputs
@@ -213,8 +215,8 @@ def fused_clamp_act_mul(
         else:
             assert out.shape == (M, n_half)
 
-    assert n_half >= 128
-    assert n_half % 128 == 0
+    assert n_half >= quant_block_size
+    assert n_half % quant_block_size == 0
 
     # default block width is the whole row, can change at config
     BLOCK_SIZE_N = triton.next_power_of_2(n_half)
