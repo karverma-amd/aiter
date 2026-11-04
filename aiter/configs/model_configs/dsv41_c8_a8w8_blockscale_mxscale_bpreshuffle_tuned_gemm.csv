@@ -1,0 +1,6 @@
+gfx,cu_num,M,N,K,w_scale_block,libtype,kernelId,splitK,us,kernelName,tflops,bw,errRatio
+gfx1250,256,48,1792,5120,32x32,flydsl,bmm,1,7.414,flydsl_bmm_mxfp8_32_wmma_t16x64x512_mw1_nw4_nb3_sk1_cm1_cn1,,,0.00e+00
+gfx1250,256,48,8192,1280,32x32,flydsl,bmm,1,5.633,flydsl_bmm_mxfp8_32_wmma_t16x128x256_mw1_nw4_nb3_sk1_cm1_cn1,,,0.00e+00
+gfx1250,256,48,5120,2048,32x32,flydsl,bmm,1,5.930,flydsl_bmm_mxfp8_32_wmma_t16x128x512_mw1_nw4_nb4_sk1_cm1_cn1,,,0.00e+00
+gfx1250,256,48,1152,5120,32x32,flydsl,bmm,1,7.103,flydsl_bmm_mxfp8_32_wmma_t32x32x1024_mw2_nw2_nb2_sk1_cm1_cn1,,,0.00e+00
+gfx1250,256,48,5120,576,32x32,flydsl,bmm,1,4.910,flydsl_bmm_mxfp8_32_wmma_t32x128x128_mw1_nw4_nb4_sk1_cm1_cn1,,,0.00e+00
